@@ -1,3 +1,4 @@
+# firebase_authentication_token_validator
 A library to validate Firebase Auth JWTs.
 This can be used to ensure that a caller of your endpoint is a authenticated user from your Firebase project.
 
