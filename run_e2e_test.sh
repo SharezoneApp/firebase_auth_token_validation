@@ -7,4 +7,6 @@ if [-f ".env"]; then
 fi
 
 cd firebase_authentication_token_validator
-dart test e2e_test
+if dart pub get; then
+    dart test e2e_test
+fi
