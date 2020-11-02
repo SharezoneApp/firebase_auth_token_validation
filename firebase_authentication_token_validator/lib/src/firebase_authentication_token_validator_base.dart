@@ -29,8 +29,11 @@ class Constraint {
 
 /// See https://firebase.google.com/docs/auth/admin/verify-id-tokens#verify_id_tokens_using_a_third-party_jwt_library
 class FirebaseAuthenticationTokenValidator {
-  FirebaseAuthenticationTokenValidator(this.projectId, this.publicKeysLoader) {
-    if (!isNotEmptyOrNull(projectId)) {
+  // TODO: CachingPublicKeysLoader should probably be internal instead
+  // of optional.
+  FirebaseAuthenticationTokenValidator(
+      {@required this.firebaseProjectId, this.publicKeysLoader}) {
+    if (!isNotEmptyOrNull(firebaseProjectId)) {
       throw ArgumentError('projectId muste be non-empty');
     }
     jwtConstraints = <Constraint>[
@@ -50,10 +53,12 @@ class FirebaseAuthenticationTokenValidator {
           'Issued-at time "iat" must be in the past. The time is measured in seconds since the UNIX epoch.',
           (jwt) => jwt.issuedAt.toDateTime().isBefore(DateTime.now())),
       Constraint('Audience "aud" must be matching the Firebase project ID.',
-          (jwt) => jwt.audience == projectId),
+          (jwt) => jwt.audience == firebaseProjectId),
       Constraint(
           'Issuer "iss" must be "https://securetoken.google.com/<projectId>", where <projectId> is the same project ID used for aud.',
-          (jwt) => jwt.issuer == 'https://securetoken.google.com/$projectId'),
+          (jwt) =>
+              jwt.issuer ==
+              'https://securetoken.google.com/$firebaseProjectId'),
       Constraint('Authentication time "auth_time" must be in the past.',
           (jwt) => jwt.authTime.toDateTime().isBefore(DateTime.now())),
       Constraint(
@@ -76,7 +81,7 @@ class FirebaseAuthenticationTokenValidator {
   }
 
   List<Constraint> jwtConstraints;
-  final String projectId;
+  final String firebaseProjectId;
   final CachingPublicKeysLoader publicKeysLoader;
   Logger _logger;
 
