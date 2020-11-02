@@ -16,8 +16,10 @@ jobs:
     
     steps:
     - uses: actions/checkout@v2
+    - name: Run tests (im confused where I am)
+      run: ls
     - name: Run tests
       env:
         FIREBASE_FUNCTIONS_BASE_URL: ${{ secrets.FIREBASE_FUNCTIONS_BASE_URL }}
         FIREBASE_PROJECT_ID: ${{ secrets.FIREBASE_PROJECT_ID }}
-      run: ./run_e2e_tests.sh
+      run: run_e2e_tests.sh
