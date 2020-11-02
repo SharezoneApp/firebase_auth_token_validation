@@ -29,6 +29,7 @@ const expiredToken =
 void main() {
   String validToken;
   FirebaseAuthenticationTokenValidator validator;
+  CountingHttpClient httpClient;
 
   setUpAll(() async {
     if (firebaseFunctionsBaseUrl == null || firebaseFunctionsBaseUrl.isEmpty) {
@@ -42,21 +43,61 @@ void main() {
     validToken = res.body;
     print('validToken: $validToken');
 
+    httpClient = CountingHttpClient();
     validator = FirebaseAuthenticationTokenValidator(
-        projectId, CachingPublicKeysLoader.retrying());
+        projectId, CachingPublicKeysLoader.retrying(inner: httpClient));
   });
 
   test('Is valid and returns claims', () async {
     final claims = await validator.validateJwt(validToken);
 
-    expect(claims['uid'], 'max-mustermann-uid');
+    expect(claims['user_id'], 'max-mustermann-uid');
+    expect(claims['sub'], 'max-mustermann-uid');
+    expect(claims['iss'], contains('https://securetoken.google.com/'));
+  });
+
+  test('Caches Public-Keys from Google', () {
+    // Should only need to call the google api once sucessfully.
+    // Could theoretically break if the cached value expires at the instant that
+    // we get it, but the chance should be very small.
+    expect(httpClient.successfulResponses, 1);
+    // Sanity check
+    expect(httpClient.remoteCalls,
+        httpClient.unsuccessfulResponses + httpClient.successfulResponses);
+  });
+
+  test('Works multiple times', () async {
+    // Just to ensure that no error with caching the public keys from the
+    // Google-Api breaks the Validatior.
+    await validator.validateJwt(validToken);
+    await validator.validateJwt(validToken);
   });
 
   test('throws when given expired token', () async {
     // ignore: prefer_function_declarations_over_variables
-    final exec = () => validator.validateJwt(validToken);
+    final exec = () => validator.validateJwt(expiredToken);
 
     // TODO: Shouldn't be an ArgumentError
     expect(exec, throwsArgumentError);
   });
+}
+
+class CountingHttpClient extends http.BaseClient {
+  final http.Client client = http.Client();
+  int remoteCalls = 0;
+  int successfulResponses = 0;
+  int unsuccessfulResponses = 0;
+
+  @override
+  Future<http.StreamedResponse> send(http.BaseRequest request) async {
+    remoteCalls += 1;
+    final response = await client.send(request);
+    final statusCode = response.statusCode;
+    if (statusCode >= 200 && statusCode <= 299) {
+      successfulResponses += 1;
+    } else {
+      unsuccessfulResponses += 1;
+    }
+    return response;
+  }
 }

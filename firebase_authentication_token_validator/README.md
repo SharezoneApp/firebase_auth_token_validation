@@ -5,8 +5,6 @@ Created from templates made available by Stagehand under a BSD-style
 
 ## Usage
 
-(TODO: Auf Node 10 upgraden, weil Node 8 ausläuft https://firebase.google.com/support/faq#expandable-20)
-
 A simple usage example:
 
 ```dart

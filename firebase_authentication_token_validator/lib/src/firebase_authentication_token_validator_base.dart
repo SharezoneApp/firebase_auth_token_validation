@@ -105,6 +105,7 @@ class CachingPublicKeysLoader {
     DateTime Function() getCurrentTime,
   }) {
     _getCurrentTime = getCurrentTime ?? () => DateTime.now();
+    // ignore: no_runtimetype_tostring
     _logger = Logger('$runtimeType');
   }
 

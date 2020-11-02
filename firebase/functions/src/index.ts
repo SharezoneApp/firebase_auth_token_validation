@@ -1,6 +1,6 @@
 import { auth, initializeApp } from 'firebase-admin';
 import * as functions from 'firebase-functions';
-const fetch = require('node-fetch');
+import fetch from 'node-fetch';
 
 initializeApp();
 const _auth = auth();
@@ -27,17 +27,19 @@ export const getAuthToken = functions.https.onRequest(async (request, response) 
     response.send(idToken);
 });
 
-// Copy from https://console.firebase.google.com/project/[projectId]/settings/general (web api key)
-const API_KEY = 'TODO';
 
 async function getIdTokenFromCustomToken(customToken: string): Promise<string> {
-    const url = `https://www.googleapis.com/identitytoolkit/v3/relyingparty/verifyCustomToken?key=${API_KEY}`;
+    // From https://console.firebase.google.com/project/[projectId]/settings/general (web api key)
+    // firebase namespace is reserved so i use fbase
+    const apiKey = functions.config().fbase.api_key;
+    const url = `https://www.googleapis.com/identitytoolkit/v3/relyingparty/verifyCustomToken?key=${apiKey}`;
     const data = {
         token: customToken,
         returnSecureToken: true
     };
 
     const response = await fetch(url, {
+        method: 'POST',
         body: JSON.stringify(data)
     });
 
