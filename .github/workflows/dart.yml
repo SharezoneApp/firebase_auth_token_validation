@@ -1,0 +1,24 @@
+name: Dart CI
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    container:
+      image:  google/dart:latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Change to Dart package directory
+      run: cd firebase_authentication_token_validator
+    - name: Install dependencies
+      run: pub get
+    - name: Run tests
+      run: pub run test
