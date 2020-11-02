@@ -1,5 +1,18 @@
 A library to validate Firebase Auth JWTs.
-This can be used to ensure that a caller of your endpoint is a authenticated user from your Firebase project
+This can be used to ensure that a caller of your endpoint is a authenticated user from your Firebase project.
+
+**Authenticating the JWT on the Server**
+```dart
+final tokenValidator = FirebaseAuthenticationTokenValidator(firebaseProjectId: projectId);
+
+Response handleRequest(Request request) {
+    final jwt = request.headers['authorization'];
+    final claims = await tokenValidator.validateJwt(jwt);
+    print(claims['user_id']); // Uid of user sending the request.
+}
+```
+
+The token can be fetched from the Firebase-`User` from the [firebase_auth](https://pub.dev/packages/firebase_auth) package.
 
 **Example Request from the Client:**
 ```dart
@@ -16,16 +29,4 @@ await httpClient.post(
   },
   body: json.encode({'cake': {'deliciousness': 'very-delicious'}}),
 );
-
-```
-**Authenticating the JWT on the Server**
-```dart
-final tokenValidator = FirebaseAuthenticationTokenValidator(firebaseProjectId: projectId);
-
-Response handleRequest(Request request) {
-    final jwt = request.headers['authorization'];
-    final claims = await tokenValidator.validateJwt(jwt);
-    print(claims['user_id']); // Uid of user sending the request.
-}
-
 ```
