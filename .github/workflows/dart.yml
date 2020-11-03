@@ -14,7 +14,7 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: Check for lint Errors
-      run: ./check_for_lint_errors.sh
+      run: ./check_for_lint_errors_and_TODO_comments.sh
 
   is-formatted:
     runs-on: ubuntu-latest
