@@ -1,4 +1,4 @@
-import 'package:firebase_authentication_token_validator/src/jwt_validation_utils.dart';
+import 'package:firebase_auth_token_validation/src/jwt_validation_utils.dart';
 import 'package:corsac_jwt/corsac_jwt.dart';
 import 'package:test/test.dart';
 
