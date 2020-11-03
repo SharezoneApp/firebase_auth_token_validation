@@ -9,4 +9,5 @@ fi
 
 cd firebase_auth_token_validation
 dart pub get
+dart test
 dart test e2e_test
