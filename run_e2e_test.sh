@@ -1,4 +1,5 @@
 #!/bin/bash
+set -e
 
 # On CI-Pipeline env-vars are pre-exported via Github secrets not via .env file.
 if [-f ".env"]; then
@@ -7,6 +8,5 @@ if [-f ".env"]; then
 fi
 
 cd firebase_authentication_token_validator
-if dart pub get; then
-    dart test e2e_test
-fi
+dart pub get
+dart test e2e_test
