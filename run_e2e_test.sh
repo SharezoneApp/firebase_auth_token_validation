@@ -7,6 +7,6 @@ if [-f ".env"]; then
     . ./load_env_into_bash.sh
 fi
 
-cd firebase_authentication_token_validator
+cd firebase_auth_token_validation
 dart pub get
 dart test e2e_test
