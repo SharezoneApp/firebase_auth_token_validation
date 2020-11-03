@@ -29,8 +29,6 @@ class Constraint {
 
 /// See https://firebase.google.com/docs/auth/admin/verify-id-tokens#verify_id_tokens_using_a_third-party_jwt_library
 class FirebaseAuthenticationTokenValidator {
-  // TODO: CachingPublicKeysLoader should probably be internal instead
-  // of optional.
   FirebaseAuthenticationTokenValidator(
       {@required this.firebaseProjectId, this.publicKeysLoader}) {
     if (!isNotEmptyOrNull(firebaseProjectId)) {
@@ -110,7 +108,6 @@ class CachingPublicKeysLoader {
     DateTime Function() getCurrentTime,
   }) {
     _getCurrentTime = getCurrentTime ?? () => DateTime.now();
-    // ignore: no_runtimetype_tostring
     _logger = Logger('$runtimeType');
   }
 

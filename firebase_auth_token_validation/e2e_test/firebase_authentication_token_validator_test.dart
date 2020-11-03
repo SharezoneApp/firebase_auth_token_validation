@@ -41,6 +41,8 @@ void main() {
 
     final res = await http.get('$firebaseFunctionsBaseUrl/getAuthToken');
     validToken = res.body;
+    // It's useful to see the token in the CI Output so we print here
+    // ignore: avoid_print
     print('validToken: $validToken');
 
     httpClient = CountingHttpClient();
@@ -79,7 +81,6 @@ void main() {
     // ignore: prefer_function_declarations_over_variables
     final exec = () => validator.validateJwt(expiredToken);
 
-    // TODO: Shouldn't be an ArgumentError
     expect(exec, throwsArgumentError);
   });
 }

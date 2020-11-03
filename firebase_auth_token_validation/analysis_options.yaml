@@ -5,10 +5,14 @@ include: package:lint/analysis_options_package.yaml
 
 # For lint rules and documentation, see http://dart-lang.github.io/linter/lints.
 # Uncomment to specify additional rules.
-# linter:
+linter:
 #   rules:
 #     - camel_case_types
 
 analyzer:
+  errors:
+    # Used to construct Logger.
+    # Should not matter in performance for the low usage (fingers crossed).
+    no_runtimetype_tostring: ignore
 #   exclude:
 #     - path/to/excluded/files/**
