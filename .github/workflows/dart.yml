@@ -7,17 +7,32 @@ on:
     branches: [ master ]
 
 jobs:
-  test:
-
+  check-no-lints-and-todos:
     runs-on: ubuntu-latest
-
     container:
       image:  google/dart:latest
-    
+    steps:
+    - uses: actions/checkout@v2
+    - name: Check for lint Errors
+      run: ./check_for_lint_errors.sh
+
+  is-formatted:
+    runs-on: ubuntu-latest
+    container:
+      image:  google/dart:latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Check for lint Errors
+      run: ./check_code_is_formatted.sh
+
+  test:
+    runs-on: ubuntu-latest
+    container:
+      image:  google/dart:latest
     steps:
     - uses: actions/checkout@v2
     - name: Run tests
       env:
         FIREBASE_FUNCTIONS_BASE_URL: ${{ secrets.FIREBASE_FUNCTIONS_BASE_URL }}
         FIREBASE_PROJECT_ID: ${{ secrets.FIREBASE_PROJECT_ID }}
-      run: ./run_e2e_test.sh
+      run: ./run_all_tests.sh
