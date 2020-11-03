@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:firebase_authentication_token_validator/firebase_authentication_token_validator.dart';
+import 'package:firebase_auth_token_validation/firebase_auth_token_validation.dart';
 import 'package:test/test.dart';
 import 'package:http/http.dart' as http;
 
