@@ -28,8 +28,8 @@ class Constraint {
 }
 
 /// See https://firebase.google.com/docs/auth/admin/verify-id-tokens#verify_id_tokens_using_a_third-party_jwt_library
-class FirebaseAuthenticationTokenValidator {
-  FirebaseAuthenticationTokenValidator(
+class FirebaseAuthTokenValidator {
+  FirebaseAuthTokenValidator(
       {@required this.firebaseProjectId, this.publicKeysLoader}) {
     if (!isNotEmptyOrNull(firebaseProjectId)) {
       throw ArgumentError('projectId muste be non-empty');
