@@ -48,7 +48,7 @@ void main() {
     httpClient = CountingHttpClient();
     validator = FirebaseAuthTokenValidator(
       firebaseProjectId: projectId,
-      publicKeysLoader: CachingPublicKeysLoader.retrying(inner: httpClient),
+      inner: httpClient,
     );
   });
 
