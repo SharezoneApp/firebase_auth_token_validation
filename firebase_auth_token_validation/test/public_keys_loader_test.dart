@@ -1,8 +1,8 @@
 import 'dart:convert';
 
-import 'package:firebase_auth_token_validation/firebase_auth_token_validation.dart';
 import 'package:firebase_auth_token_validation/src/jwt_validation_utils.dart'
     as validation;
+import 'package:firebase_auth_token_validation/src/caching_public_keys_loader.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart' as http;
 import 'package:test/test.dart';
@@ -18,7 +18,7 @@ void main() {
       httpClient = http.MockClient((r) => handler(r));
       publicKeysLoader = CachingPublicKeysLoader(
         client: httpClient,
-        googleKeyIdsUrl: 'https://www.some-url.com',
+        publicKeysUrl: 'https://www.some-url.com',
         getCurrentTime: () => getCurrentTime(),
       );
       getCurrentTime = () => DateTime.now();
