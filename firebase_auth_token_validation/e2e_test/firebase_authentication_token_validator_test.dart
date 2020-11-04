@@ -28,7 +28,7 @@ const expiredToken =
 
 void main() {
   String validToken;
-  FirebaseAuthenticationTokenValidator validator;
+  FirebaseAuthTokenValidator validator;
   CountingHttpClient httpClient;
 
   setUpAll(() async {
@@ -46,7 +46,7 @@ void main() {
     print('validToken: $validToken');
 
     httpClient = CountingHttpClient();
-    validator = FirebaseAuthenticationTokenValidator(
+    validator = FirebaseAuthTokenValidator(
       firebaseProjectId: projectId,
       publicKeysLoader: CachingPublicKeysLoader.retrying(inner: httpClient),
     );
