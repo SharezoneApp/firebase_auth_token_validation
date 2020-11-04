@@ -77,11 +77,11 @@ void main() {
     await validator.validateJwt(validToken);
   });
 
-  test('throws when given expired token', () async {
+  test('throws $JWTValidationException when given expired token', () async {
     // ignore: prefer_function_declarations_over_variables
     final exec = () => validator.validateJwt(expiredToken);
 
-    expect(exec, throwsArgumentError);
+    expect(exec, throwsA(isA<JWTValidationException>()));
   });
 }
 
