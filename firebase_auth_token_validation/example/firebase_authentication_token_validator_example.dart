@@ -1,5 +1,7 @@
 import 'package:firebase_auth_token_validation/firebase_auth_token_validation.dart';
 
+// ignore_for_file:unused_local_variable
+
 Future<void> main() async {
   final tokenValidator =
       FirebaseAuthTokenValidator(firebaseProjectId: 'my-firebase-project');
