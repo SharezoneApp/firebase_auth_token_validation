@@ -19,8 +19,39 @@ const googleKeyIdsUrl =
 class FirebaseAuthTokenValidator {
   FirebaseAuthTokenValidator({
     @required this.firebaseProjectId,
+
+    /// Maximum [Duration] that a JWT token time check can be inaccurate.
+    /// Defaults to 30 seconds.
+    ///
+    /// E.g. if [maximumAllowedTimeVariance] is 2 minutes the token is still
+    /// valid for two minutes after the expiration time.
+    ///
+    /// It is also valid if the issued-at/authentication is in the future but
+    /// still within the [maximumAllowedTimeVariance]-
+    /// E.g.:
+    /// [maximumAllowedTimeVariance]: 2 min
+    /// Current time: 19:30
+    /// Issued-at time: 19:31
+    /// --> Valid
+    /// ----
+    /// [maximumAllowedTimeVariance]: 2 min
+    /// Current time: 19:30
+    /// Issued-at time: 19:33
+    /// --> Invalid
+    ///
+    ///
+    /// This variance is used for checking:
+    /// - Expiration time is in the future
+    /// - Issued-at time "iat" is in the past
+    /// - Authentication time "auth_time" is in the past
+    Duration maximumAllowedTimeVariance,
     http.Client inner,
   }) : _publicKeysLoader = CachingPublicKeysLoader.retrying(inner: inner) {
+    maximumAllowedTimeVariance ??= Duration(seconds: 30);
+    if (maximumAllowedTimeVariance.isNegative) {
+      throw ArgumentError.value(maximumAllowedTimeVariance,
+          'maximumAllowedTimeVariance', "can't be negative");
+    }
     if (!_isNotEmptyOrNull(firebaseProjectId)) {
       throw ArgumentError('projectId muste be non-empty');
     }
@@ -38,10 +69,16 @@ class FirebaseAuthTokenValidator {
           (jwt) => _isNotEmptyOrNull(jwt.kidHeader)),
       Constraint(
           'Expiration time "exp" must be in the future. The time is measured in seconds since the UNIX epoch.',
-          (jwt) => jwt.expiresAt.toDateTime().isAfter(DateTime.now())),
+          (jwt) => jwt.expiresAt
+              .toDateTime()
+              .add(maximumAllowedTimeVariance)
+              .isAfter(DateTime.now())),
       Constraint(
           'Issued-at time "iat" must be in the past. The time is measured in seconds since the UNIX epoch.',
-          (jwt) => jwt.issuedAt.toDateTime().isBefore(DateTime.now())),
+          (jwt) => jwt.issuedAt
+              .toDateTime()
+              .subtract(maximumAllowedTimeVariance)
+              .isBefore(DateTime.now())),
       Constraint('Audience "aud" must be matching the Firebase project ID.',
           (jwt) => jwt.audience == firebaseProjectId),
       Constraint(
@@ -49,8 +86,12 @@ class FirebaseAuthTokenValidator {
           (jwt) =>
               jwt.issuer ==
               'https://securetoken.google.com/$firebaseProjectId'),
-      Constraint('Authentication time "auth_time" must be in the past.',
-          (jwt) => jwt.authTime.toDateTime().isBefore(DateTime.now())),
+      Constraint(
+          'Authentication time "auth_time" must be in the past.',
+          (jwt) => jwt.authTime
+              .toDateTime()
+              .subtract(maximumAllowedTimeVariance)
+              .isBefore(DateTime.now())),
       Constraint(
         'Key ID "kid" header claim must be signed by one of the public keys listed at $googleKeyIdsUrl.',
         (jwt) async {
