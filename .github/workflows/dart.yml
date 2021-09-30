@@ -10,7 +10,7 @@ jobs:
   check-no-lints-and-todos:
     runs-on: ubuntu-latest
     container:
-      image:  google/dart:latest
+      image:  google/dart:2.10.0
     steps:
     - uses: actions/checkout@v2
     - name: Check for lint Errors
@@ -19,7 +19,7 @@ jobs:
   is-formatted:
     runs-on: ubuntu-latest
     container:
-      image:  google/dart:latest
+      image:  google/dart:2.10.0
     steps:
     - uses: actions/checkout@v2
     - name: Check for lint Errors
@@ -28,7 +28,7 @@ jobs:
   test:
     runs-on: ubuntu-latest
     container:
-      image:  google/dart:latest
+      image:  google/dart:2.10.0
     steps:
     - uses: actions/checkout@v2
     - name: Run tests
